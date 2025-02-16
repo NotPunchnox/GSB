@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSB - Suivi des paiements</title>
+    <link rel="stylesheet" href="../css/comptable.css">
+</head>
+<body>
+    <nav class="nav">
+        <a href="dashboard.html">Accueil</a>
+        <a href="validate.html">Valider les fiches</a>
+        <a href="payments.html">Suivi des paiements</a>
+    </nav>
+
+    <div class="container">
+        <h1>Suivi des paiements</h1>
+        
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Rechercher...">
+        </div>
+
+        <div class="table-container animate-in">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Visiteur</th>
+                        <th>Période</th>
+                        <th>Montant</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Jean Dupont</td>
+                        <td>Avril 2024</td>
+                        <td>1247 €</td>
+                        <td><span class="status status-waiting">En attente de paiement</span></td>
+                        <td><button class="btn btn-details" onclick="showPaymentDetails('Jean Dupont')">Détails</button></td>
+                    </tr>
+                    <tr>
+                        <td>Marie Martin</td>
+                        <td>Mars 2024</td>
+                        <td>980 €</td>
+                        <td><span class="status status-paid">Payé</span></td>
+                        <td><button class="btn btn-details" onclick="showPaymentDetails('Marie Martin')">Détails</button></td>
+                    </tr>
+                    <tr>
+                        <td>Pierre Durand</td>
+                        <td>Avril 2024</td>
+                        <td>1560 €</td>
+                        <td><span class="status status-processing">En cours de traitement</span></td>
+                        <td><button class="btn btn-details" onclick="showPaymentDetails('Pierre Durand')">Détails</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="payment-sidebar" class="sidebar">
+        <h2>Détails du paiement</h2>
+        <div id="payment-details-content"></div>
+        <div class="actions">
+            <button class="btn btn-success">Marquer comme payé</button>
+            <button class="btn btn-primary">Historique des actions</button>
+        </div>
+    </div>
+
+    <script>
+        function showPaymentDetails(visitor) {
+            const sidebar = document.getElementById('payment-sidebar');
+            sidebar.classList.add('active');
+        }
+
+        // Fermer le sidebar en cliquant en dehors
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('payment-sidebar');
+            if (!sidebar.contains(e.target) && !e.target.matches('.btn-details')) {
+                sidebar.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

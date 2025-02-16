@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSB - Tableau de bord comptable</title>
+    <link rel="stylesheet" href="../css/comptable.css">
+</head>
+<body>
+    <nav class="nav">
+        <a href="dashboard.html">Accueil</a>
+        <a href="validate.html">Valider les fiches</a>
+        <a href="payments.html">Suivi des paiements</a>
+    </nav>
+
+    <div class="container">
+        <h1>Tableau de bord du comptable</h1>
+        
+        <div class="stats-grid animate-in">
+            <div class="card">
+                <h3>Fiches à valider</h3>
+                <p class="stat">12</p>
+            </div>
+            <div class="card">
+                <h3>Fiches validées ce mois</h3>
+                <p class="stat">89</p>
+            </div>
+            <div class="card">
+                <h3>Montant total à rembourser</h3>
+                <p class="stat">24 530 €</p>
+            </div>
+            <div class="card">
+                <h3>Remboursements en attente</h3>
+                <p class="stat">7</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Animation des statistiques au chargement
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.stat').forEach(stat => {
+                stat.style.animation = 'slideIn 0.3s ease-out forwards';
+            });
+        });
+    </script>
+</body>
+</html>

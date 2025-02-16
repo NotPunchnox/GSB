@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSB - Validation des fiches</title>
+    <link rel="stylesheet" href="../css/comptable.css">
+</head>
+<body>
+    <nav class="nav">
+        <a href="dashboard.html">Accueil</a>
+        <a href="validate.html">Valider les fiches</a>
+        <a href="payments.html">Suivi des paiements</a>
+    </nav>
+
+    <div class="container">
+        <h1>Validation des fiches de frais</h1>
+        
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Rechercher...">
+        </div>
+
+        <div class="table-container animate-in">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Visiteur</th>
+                        <th>Période</th>
+                        <th>Montant</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Jean Dupont</td>
+                        <td>Avril 2024</td>
+                        <td>1247 €</td>
+                        <td><span class="status status-pending">En attente</span></td>
+                        <td><button class="btn btn-details" onclick="showDetails('Jean Dupont')">Voir détails</button></td>
+                    </tr>
+                    <!-- Autres lignes similaires -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="sidebar" class="sidebar">
+        <h2>Détails de la fiche</h2>
+        <div id="details-content"></div>
+        <div class="actions">
+            <button class="btn btn-success">Valider</button>
+            <button class="btn btn-danger">Refuser</button>
+        </div>
+    </div>
+
+    <script>
+        function showDetails(visitor) {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.add('active');
+        }
+
+        // Fermer le sidebar en cliquant en dehors
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            if (!sidebar.contains(e.target) && !e.target.matches('.btn-details')) {
+                sidebar.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
