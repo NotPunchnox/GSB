@@ -88,6 +88,7 @@
   
   /* Statuts */
   .status {
+    color: white;
     padding: 0.5rem 1rem;
     border-radius: 20px;
     font-size: 0.875rem;
@@ -113,6 +114,7 @@
   
   /* Actions */
   .btn {
+    width: 100%;
     padding: 0.5rem 1rem;
     border-radius: var(--border-radius);
     border: none;
@@ -165,6 +167,15 @@
     transition: transform 0.3s ease-in-out;
     padding: 2rem;
     z-index: 1000;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin: 12px;
   }
   
   .sidebar.active {
