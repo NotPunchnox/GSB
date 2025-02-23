@@ -8,8 +8,11 @@
 </head>
 <body>
     <nav>
-        <a href="form.html" class="active">Renseigner Fiche Frais</a>
-        <a href="list.html">Consulter Fiche Frais</a>
+        <div>
+            <a href="form.html" class="active">Renseigner Fiche Frais</a>
+            <a href="list.html">Consulter Fiche Frais</a>
+        </div>
+        <img class="svg" src="../../public/images/logout.svg" alt="logout">
     </nav>
 
     <div class="container">
@@ -37,24 +40,26 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Libellé</th>
-                        <th>Quantité</th>
-                        <th>Montant unitaire</th>
-                        <th>Total</th>
+                        <th scope="row">Libellé</th>
+                        <th scope="row">Quantité</th>
+                        <th scope="row">Montant unitaire</th>
+                        <th scope="row">Total</th>
                     </tr>
                 </thead>
                 <tbody id="forfaitises"></tbody>
             </table>
-            <button class="btn btn-green" id="valider-frais">Valider</button>
+            <div class="validate">
+                <button type="button" class="btn btn-green" id="valider-frais">Valider</button>
+            </div>
         </div>
 
         <div class="card">
-            <h3 style="margin-bottom: 15px;"> hors forfait</h3>
+            <h3> hors forfait</h3>
             <div class="grid">
                 <input type="date" id="date" required>
                 <input type="text" id="libelle" placeholder="Libellé" required>
                 <input type="number" id="montant" placeholder="Montant" required>
-                <button class="btn btn-blue" id="ajouter-frais">Ajouter</button>
+                <button type="button" class="btn btn-blue" id="ajouter-frais">Ajouter</button>
             </div>
             <ul id="hors-forfait-list"></ul>
         </div>

@@ -27,6 +27,8 @@ nav {
     padding: 1rem;
     display: flex;
     gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
 }
 
 nav a {
@@ -42,4 +44,14 @@ nav a.active {
 
 .nav a:hover {
     opacity: 1;
+}
+
+nav .svg {
+    cursor: pointer;
+    height: 25px;
+    filter: invert(26%) sepia(63%) saturate(1398%) hue-rotate(329deg) brightness(105%) contrast(82%);
+}
+
+nav .svg:hover {
+    opacity: 0.8;
 }

@@ -18,7 +18,7 @@
             <div class="text-right mb-4">
                 <label for="mois-select">Sélectionner un mois :</label>
                 <select id="mois-select" class="search-input" style="max-width: 300px;"></select>
-                <button id="valider-mois" class="btn">Valider</button>
+                <button type="button" id="valider-mois" class="btn">Valider</button>
             </div>
             <table>
                 <thead>
@@ -37,7 +37,7 @@
     <div class="side-panel" id="details-panel">
         <div class="side-panel-header">
             <h3 id="panel-title">Détails de la fiche</h3>
-            <button class="close-btn">&times;</button>
+            <button type="button" class="close-btn">&times;</button>
         </div>
         <div id="details-content"></div>
     </div>
@@ -92,7 +92,7 @@
                         <td>${fiche.periode}</td>
                         <td>${fiche.montant}</td>
                         <td><span class="badge badge-${fiche.statut === "Validée" ? "green" : "yellow"}">${fiche.statut}</span></td>
-                        <td><button class="btn details-btn" data-key="${selectedMonth}">Voir détails</button></td>
+                        <td><button class="details-btn" data-key="${selectedMonth}">Voir détails</button></td>
                     `;
                     fraisList.appendChild(row);
                 }
