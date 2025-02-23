@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulter Fiche Frais</title>
+    <link rel="stylesheet" href="../../css/visiteur.css">
+</head>
+<body>
+    <nav>
+        <a href="form.html">Renseigner Fiche Frais</a>
+        <a href="hors-frais.html">Renseigner Fiche Hors Frais</a>
+        <a href="list.html" class="active">Consulter Fiche Frais</a>
+    </nav>
+
+    <div class="container">
+        <h2 class="mb-4">Consultation des fiches de frais</h2>
+        <div class="card">
+            <div class="text-right mb-4">
+                <label for="mois-select">Sélectionner un mois :</label>
+                <select id="mois-select" class="search-input" style="max-width: 300px;"></select>
+                <button id="valider-mois" class="btn">Valider</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Période</th>
+                        <th>Montant</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="frais-list"></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="side-panel" id="details-panel">
+        <div class="side-panel-header">
+            <h3 id="panel-title">Détails de la fiche</h3>
+            <button class="close-btn">&times;</button>
+        </div>
+        <div id="details-content"></div>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const moisSelect = document.getElementById("mois-select");
+            const validerBtn = document.getElementById("valider-mois");
+            const fraisList = document.getElementById("frais-list");
+            const detailsPanel = document.getElementById("details-panel");
+            const panelTitle = document.getElementById("panel-title");
+            const detailsContent = document.getElementById("details-content");
+            const closeBtn = document.querySelector(".close-btn");
+    
+            const fichesFrais = {
+                "2024-04": {
+                    periode: "Avril 2024", montant: "1247 €", statut: "Validée",
+                    forfaitises: [
+                        { type: "Repas restaurant", quantite: 15, prix: 29 },
+                        { type: "Nuitées hôtel", quantite: 10, prix: 80 },
+                        { type: "Frais kilométriques", quantite: 150, prix: 0.62 }
+                    ],
+                    nonForfaitises: [
+                        { libelle: "Parking", montant: 20, date: "05/04/2024" }
+                    ]
+                },
+                "2024-03": {
+                    periode: "Mars 2024", montant: "1020 €", statut: "En attente",
+                    forfaitises: [
+                        { type: "Repas restaurant", quantite: 10, prix: 29 }
+                    ],
+                    nonForfaitises: [
+                        { libelle: "Taxi", montant: 45, date: "12/03/2024" }
+                    ]
+                }
+            };
+    
+            Object.keys(fichesFrais).forEach(key => {
+                const option = document.createElement("option");
+                option.value = key;
+                option.textContent = fichesFrais[key].periode;
+                moisSelect.appendChild(option);
+            });
+    
+            validerBtn.addEventListener("click", () => {
+                const selectedMonth = moisSelect.value;
+                fraisList.innerHTML = "";
+                if (fichesFrais[selectedMonth]) {
+                    const fiche = fichesFrais[selectedMonth];
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${fiche.periode}</td>
+                        <td>${fiche.montant}</td>
+                        <td><span class="badge badge-${fiche.statut === "Validée" ? "green" : "yellow"}">${fiche.statut}</span></td>
+                        <td><button class="btn details-btn" data-key="${selectedMonth}">Voir détails</button></td>
+                    `;
+                    fraisList.appendChild(row);
+                }
+            });
+    
+            fraisList.addEventListener("click", (e) => {
+                if (e.target.classList.contains("details-btn")) {
+                    const key = e.target.getAttribute("data-key");
+                    const fiche = fichesFrais[key];
+                    panelTitle.textContent = `Détails de la fiche - ${fiche.periode}`;
+                    
+                    let detailsHtml = "<h4>Frais forfaitisés</h4><table><tr><th>Type</th><th>Quantité</th><th>Prix unitaire</th><th>Total</th></tr>";
+                    fiche.forfaitises.forEach(frais => {
+                        detailsHtml += `<tr><td>${frais.type}</td><td>${frais.quantite}</td><td>${frais.prix} €</td><td>${(frais.quantite * frais.prix).toFixed(2)} €</td></tr>`;
+                    });
+                    detailsHtml += "</table>";
+    
+                    detailsHtml += "<h4>Frais non forfaitisés</h4><table><tr><th>Libellé</th><th>Montant</th><th>Date</th></tr>";
+                    fiche.nonForfaitises.forEach(frais => {
+                        detailsHtml += `<tr><td>${frais.libelle}</td><td>${frais.montant} €</td><td>${frais.date}</td></tr>`;
+                    });
+                    detailsHtml += "</table>";
+    
+                    detailsContent.innerHTML = detailsHtml;
+                    detailsPanel.classList.add("open");
+                }
+            });
+    
+            closeBtn.addEventListener("click", () => {
+                detailsPanel.classList.remove("open");
+            });
+        });
+    </script>
+</body>
+</html>
