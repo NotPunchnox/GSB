@@ -91,12 +91,13 @@ th, td {
 .badge {
     padding: 0.25rem 0.5rem;
     border-radius: 1rem;
-    font-size: 0.875rem;
+    font-size: 12px;
 }
 
 .badge-green {
     background: var(--green);
-    color: white;
+    color: #1a1f2e;
+    font-weight: 500;
 }
 
 .badge-yellow {
