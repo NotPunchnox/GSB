@@ -67,9 +67,10 @@
 
     <script>
         const forfaitises = [
-            { type: "Repas restaurant", prix: 20 },
-            { type: "Nuitées hôtel", prix: 80 },
-            { type: "Frais kilométriques", prix: 0.62 }
+            { type: "Repas restaurant", prix: 20.00 },
+            { type: "Nuitées hôtel", prix: 80.00 },
+            { type: "Frais kilométriques", prix: 0.62 },
+            { type: "Forfait Etape", prix: 110.00 }
         ];
 
         const forfaitTable = document.getElementById("forfaitises");
@@ -78,7 +79,7 @@
             row.innerHTML = `
                 <td>${frais.type}</td>
                 <td><input type="number" class="quantite" data-prix="${frais.prix}" value="0"></td>
-                <td>${frais.prix} €</td>
+                <td>${frais.prix % 2 == 0 ? frais.prix + ".00" : frais.prix} €</td>
                 <td class="total">0 €</td>
             `;
             forfaitTable.appendChild(row);
