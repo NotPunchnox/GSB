@@ -1,47 +1,40 @@
 <?php include("../../functions/logs.php"); ?>
-
+<?php include("../../functions/create-cookie.php"); ?>
+<?php include("../../functions/alert.php"); ?>
+<?php include("../../functions/login.php"); ?>
 
 <?php
-// Création d'une fonction permettant d'avertir l'utilisateur avec une alerte
-function alert(string $message): void {
-    echo "<script>alert('" . $message . "')</script>";
-}
+// session_start();
 
 
 // Vérifier si les valeurs on été set
 // Méthode post pour éviter que les identifiants soient présent dans l'url
 if (isset($_POST['login']) && isset($_POST['mdp'])) {
     
-    // Tentative de connexion à la base de donnée
-    try {
+    $data = Login($_POST['login'], $_POST['mdp']);
 
-        $bdd = new PDO("mysql:host=localhost;dbname=gsbV2;charset=utf8", "Visiteur","UserSuperPassword");
-
-    } catch(Exception $e) {
-        // En cas d'erreur lors de la connexion avertir l'utilisateur qu'un problème l'empêche d'acceder à la web app
-        echo "Impossible de se connecter à la base de données.";
-        die('Erreur: ' . $e->getMessage());
-    }
-
-    // Préparer la requête SQL avec prepare pour éviter les injections SQL
-    $response = $bdd->prepare('SELECT * FROM Visiteur WHERE login = ? AND mdp = ?;');
-    $response->execute(array($_POST['login'], $_POST['mdp']));
-    $data = $response->fetch();
-
+    logs($data);
 
     // Vérifier si l'utilisateur existe
     if ($data['nom'] !== null) {
         
-        logs($data, true);
+        // Afficher les informations de l'utilisateur dans les logs
+        // logs($data, true);
 
-        if(isset($_POST['remember'])) {
-            logs("remember", $_POST['remember']);
+        // initialisation de la session
+        $_SESSION['nom'] = $data['nom'];
+        $_SESSION['id'] = $data['id'];
+        $_SESSION['mdp'] = $data['mdp'];
+        $_SESSION['login'] = $data['login'];
+
+
+        // Créer un cookie à l'utilisateur si il demande à rester connecter
+        if(isset($_POST['remember']) && $_POST['remember'] == true) {
+            createCookie("GSB", json_encode($data), 1);
         }
 
-
-
         // Si l'utilisateur existe alors effectuer la redirection.
-        // header('Location: /GSB/pages/visiteur/form.html');
+        header('Location: /GSB/pages/visiteur/form.html');
     } else {
         // Si l'utilisateur n'est pas trouvé, alors les retourner un message d'erreur
         alert('Vos identifiants sont invalides.');
@@ -49,8 +42,6 @@ if (isset($_POST['login']) && isset($_POST['mdp'])) {
 }
 ?>
 
-
-?>
 
 <!DOCTYPE html>
 <html lang="fr">
