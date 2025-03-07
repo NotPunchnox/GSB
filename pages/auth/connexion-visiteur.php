@@ -16,7 +16,7 @@ if (isset($_POST['login']) && isset($_POST['mdp'])) {
     
     $data = Login($_POST['login'], $_POST['mdp']);
 
-    logs($data);
+    logs($data, true);
 
     // Vérifier si l'utilisateur existe
     if ($data['nom'] !== null) {
