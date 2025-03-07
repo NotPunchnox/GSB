@@ -4,7 +4,9 @@
 <?php include("../../functions/login.php"); ?>
 
 <?php
-// session_start();
+session_start();
+
+// Vérifier si l'utilisateur est déjà connecté, si oui le rediriger vers le dashboard
 
 
 // Vérifier si les valeurs on été set
