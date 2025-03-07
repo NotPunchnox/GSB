@@ -7,6 +7,8 @@
 <?php
 session_start();
 
+logs("Session start");
+
 // Vérifier si l'utilisateur est déjà connecté, si oui le rediriger vers le dashboard
 $logged = checkLogin();
 if($logged) {

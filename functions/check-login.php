@@ -2,6 +2,10 @@
 
 function checkLogin(){
 
+    logs("is set cookie:" . isset($_COOKIE['GSB']));
+    logs("is set session:" . isset($_SESSION['mdp']));
+
+
     if (isset($_COOKIE['GSB'])) {
         // Vérifier si l'utilisateur à un cookie
         $cookie_data = json_decode($_COOKIE['GSB']);
