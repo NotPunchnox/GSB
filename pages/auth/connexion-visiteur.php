@@ -2,12 +2,13 @@
 <?php include("../../functions/create-cookie.php"); ?>
 <?php include("../../functions/alert.php"); ?>
 <?php include("../../functions/login.php"); ?>
+<?php include("../../functions/check-login.php"); ?>
 
 <?php
 session_start();
 
 // Vérifier si l'utilisateur est déjà connecté, si oui le rediriger vers le dashboard
-
+checkLogin();
 
 // Vérifier si les valeurs on été set
 // Méthode post pour éviter que les identifiants soient présent dans l'url
@@ -19,8 +20,7 @@ if (isset($_POST['login']) && isset($_POST['mdp'])) {
 
     // Vérifier si l'utilisateur existe
     if ($data['nom'] !== null) {
-        
-        // Afficher les informations de l'utilisateur dans les logs
+
         // logs($data, true);
 
         // initialisation de la session
@@ -35,7 +35,7 @@ if (isset($_POST['login']) && isset($_POST['mdp'])) {
             createCookie("GSB", json_encode($data), 1);
         }
 
-        // Si l'utilisateur existe alors effectuer la redirection.
+        // Effectuer la redirection vers le dashboard.
         header('Location: /GSB/pages/visiteur/form.html');
     } else {
         // Si l'utilisateur n'est pas trouvé, alors les retourner un message d'erreur
