@@ -1,32 +1,41 @@
-<?php
-// Création d'une fonction permettant d'avertir l'utilisateur avec une alerte
-function alert(string $message): void {
-    echo "<script>alert('" . $message . "')</script>";
-}
+<?php include("../../functions/logs.php"); ?>
+<?php include("../../functions/create-cookie.php"); ?>
+<?php include("../../functions/alert.php"); ?>
+<?php include("../../functions/login.php"); ?>
+<?php include("../../functions/check-login.php"); ?>
 
+<?php
+session_start();
+
+// Vérifier si l'utilisateur est déjà connecté, si oui le rediriger vers le dashboard
+checkLogin();
 
 // Vérifier si les valeurs on été set
 // Méthode post pour éviter que les identifiants soient présent dans l'url
 if (isset($_POST['login']) && isset($_POST['mdp'])) {
     
-    // Tentative de connexion à la base de donnée
-    try {
+    $data = Login($_POST['login'], $_POST['mdp']);
 
-        $bdd = new PDO("mysql:host=localhost;dbname=gsbV2;charset=utf8", "Admin","AdminSupperSecretPassword");
+    logs($data);
 
-    } catch(Exception $e) {
-        // En cas d'erreur lors de la connexion avertir l'utilisateur qu'un problème l'empêche d'acceder à la web app
-        echo "Impossible de se connecter à la base de données.";
-        die('Erreur: ' . $e->getMessage());
-    }
-
-    // Préparer la requête SQL avec prepare pour éviter les injections SQL
-    $response = $bdd->prepare('SELECT * FROM Visiteur WHERE login = ? AND mdp = ?;');
-    $response->execute(array($_POST['login'], $_POST['mdp']));
-    $data = $response->fetch();
-
+    // Vérifier si l'utilisateur existe
     if ($data['nom'] !== null) {
-        // Si l'utilisateur existe alors effectuer la redirection.
+
+        // logs($data, true);
+
+        // initialisation de la session
+        $_SESSION['nom'] = $data['nom'];
+        $_SESSION['id'] = $data['id'];
+        $_SESSION['mdp'] = $data['mdp'];
+        $_SESSION['login'] = $data['login'];
+
+
+        // Créer un cookie à l'utilisateur si il demande à rester connecter
+        if(isset($_POST['remember']) && $_POST['remember'] == true) {
+            createCookie("GSB", json_encode($data), 1);
+        }
+
+        // Effectuer la redirection vers le dashboard.
         header('Location: /GSB/pages/comptable/dashboard.html');
     } else {
         // Si l'utilisateur n'est pas trouvé, alors les retourner un message d'erreur
