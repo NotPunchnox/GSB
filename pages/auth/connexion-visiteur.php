@@ -8,7 +8,10 @@
 session_start();
 
 // Vérifier si l'utilisateur est déjà connecté, si oui le rediriger vers le dashboard
-checkLogin();
+$logged = checkLogin();
+if($logged) {
+    header('Location: /GSB/pages/visiteur/form.html');
+}
 
 // Vérifier si les valeurs on été set
 // Méthode post pour éviter que les identifiants soient présent dans l'url
