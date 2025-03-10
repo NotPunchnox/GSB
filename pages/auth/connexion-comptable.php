@@ -8,7 +8,9 @@
 session_start();
 
 // Vérifier si l'utilisateur est déjà connecté, si oui le rediriger vers le dashboard
-checkLogin();
+if(checkLogin()) {
+    header('Location: /GSB/pages/comptable/dashboard.html');
+}
 
 // Vérifier si les valeurs on été set
 // Méthode post pour éviter que les identifiants soient présent dans l'url
