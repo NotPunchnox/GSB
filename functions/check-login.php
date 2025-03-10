@@ -1,6 +1,6 @@
 <?php
 
-function checkLogin(){
+function checkLogin() : bool {
 
     logs("is set cookie:" . isset($_COOKIE['GSB']));
     logs("is set session:" . isset($_SESSION['mdp']));
@@ -8,7 +8,7 @@ function checkLogin(){
 
     if (isset($_COOKIE['GSB'])) {
         // Vérifier si l'utilisateur à un cookie
-        $cookie_data = json_decode($_COOKIE['GSB']);
+        $cookie_data = json_decode($_COOKIE['GSB'], true);
 
         // Vérifier que les valeurs nécessaires sont présentes dans le cookie
         if(!isset($cookie_data['login']) && !isset($cookie_data['mdp'])) return false;
@@ -33,7 +33,7 @@ function checkLogin(){
 
         // Si oui retourner True
         return true;
-    }
+    } else return false;
 
 }
 
