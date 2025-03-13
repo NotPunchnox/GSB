@@ -16,7 +16,7 @@ if(!checkLogin()) {
 }
 
 
-// $données = requete('select * from Etat;');
+$données = RequestSQL('select * from Etat');
 
 ?>
 
