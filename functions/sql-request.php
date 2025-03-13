@@ -11,14 +11,12 @@
             die('Erreur: ' . $e->getMessage());
         }
 
-        // Préparer la requête SQL avec prepare pour éviter les injections SQL
-        $response = $bdd->prepare($request);
-        $response->execute();
-        $data = $response->fetch();
+        foreach ($bdd->query($request) as $row) {
+            logs($row, true);
+        }
+        // logs($data, true);
 
-        logs($data, true);
-
-        return $data;
+        // return $data;
     }
 
 ?>
