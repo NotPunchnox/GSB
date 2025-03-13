@@ -150,11 +150,12 @@ function getEtatClass($idEtat) {
                             <td colspan="4" class="text-center">Aucune fiche de frais disponible</td>
                         </tr>
                     <?php else: ?>
+                        <?php foreach($notesFrais as $frais): ?>
                             <tr>
-                                <td><?php echo formatMois($notesFrais['mois']); ?></td>
-                                <td><?php echo number_format($notesFrais['montantTotal'], 2, ',', ' '); ?> €</td>
+                                <td><?php echo formatMois($frais['mois']); ?></td>
+                                <td><?php echo number_format($frais['montantTotal'], 2, ',', ' '); ?> €</td>
                                 <td>
-                                    <span class="badge <?php echo getEtatClass($notesFrais['idEtat']); ?>">
+                                    <span class="badge <?php echo getEtatClass($frais['idEtat']); ?>">
                                         <?php 
                                         // On pourrait faire une requête pour récupérer le libellé de l'état, ou utiliser un mapping simple
                                         $etats = [
@@ -164,19 +165,20 @@ function getEtatClass($idEtat) {
                                             'CL' => 'Clôturée',
                                             'RE' => 'Refusée'
                                         ];
-                                        echo isset($etats[$notesFrais['idEtat']]) ? $etats[$notesFrais['idEtat']] : $notesFrais['idEtat'];
+                                        echo isset($etats[$frais['idEtat']]) ? $etats[$frais['idEtat']] : $frais['idEtat'];
                                         ?>
                                     </span>
                                 </td>
                                 <td>
                                     <form method="POST" action="list.php" style="display: inline;">
-                                        <input type="hidden" name="mois-select" value="<?php echo $notesFrais['mois']; ?>">
-                                        <button type="submit" class="details-btn" data-key="<?php echo $notesFrais['mois']; ?>">
+                                        <input type="hidden" name="mois-select" value="<?php echo $frais['mois']; ?>">
+                                        <button type="submit" class="details-btn" data-key="<?php echo $frais['mois']; ?>">
                                             Voir détails
                                         </button>
                                     </form>
                                 </td>
                             </tr>
+                        <?php endforeach; ?>
                     <?php endif; ?>
                 </tbody>
             </table>
@@ -222,17 +224,19 @@ function getEtatClass($idEtat) {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php 
-                        $totalForfaitises = 0;
-                            $montantTotal = $fraisForfaitises['quantite'] * $fraisForfaitises['montantUnitaire'];
-                            $totalForfaitises += $montantTotal;
-                        ?>
+                        <?php
+                            $totalForfaitises = 0;
+                            foreach($fraisForfaitises as $frais):
+                                $montantTotal = $frais['quantite'] * $frais['montantUnitaire'];
+                                $totalForfaitises += $montantTotal;
+                            ?>
                             <tr>
-                                <td><?php echo $fraisForfaitises['typeFrais']; ?></td>
-                                <td><?php echo $fraisForfaitises['quantite']; ?></td>
-                                <td><?php echo number_format($fraisForfaitises['montantUnitaire'], 2, ',', ' '); ?> €</td>
+                                <td><?php echo $frais['typeFrais']; ?></td>
+                                <td><?php echo $frais['quantite']; ?></td>
+                                <td><?php echo number_format($frais['montantUnitaire'], 2, ',', ' '); ?> €</td>
                                 <td><?php echo number_format($montantTotal, 2, ',', ' '); ?> €</td>
                             </tr>
+                            <?php endforeach; ?>
                         <tr class="total-row">
                             <td colspan="3" class="text-right"><strong>Total frais forfaitisés:</strong></td>
                             <td><strong></strong></td>
@@ -270,6 +274,7 @@ function getEtatClass($idEtat) {
                         <?php endforeach; ?>
                         <tr class="total-row">
                             <td colspan="2" class="text-right"><strong>Total frais hors forfait:</strong></td>
+                            <td></td>
                             <td><strong><?php echo number_format($totalHorsForfait, 2, ',', ' '); ?> €</strong></td>
                         </tr>
                     </tbody>
