@@ -1,6 +1,6 @@
-<?php include('./logs.php'); ?>
 
 <?php
+
     function RequestSQL($request) {
         // Tentative de connexion à la base de donnée
         try {

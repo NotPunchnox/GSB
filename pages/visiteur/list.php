@@ -16,7 +16,9 @@ if (!checkLogin()) {
 }
 
 
-$données = RequestSQL("select * from NoteFrais where idVisiteur = " .$GLOBALS["id"]);
+$données = RequestSQL("select * from NoteFrais where idVisiteur = \"" .$GLOBALS["id"] . "\"");
+
+
 ?>
 
 
