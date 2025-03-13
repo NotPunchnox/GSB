@@ -1,10 +1,16 @@
 <?php
+// Désactiver l'affichage des erreurs pour éviter de corrompre la réponse
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+error_reporting(E_ALL);
+
 include("../../functions/logs.php");
 include("../../functions/create-cookie.php");
 include("../../functions/alert.php");
 include("../../functions/login.php");
 include("../../functions/check-login.php");
-include("../../functions/sql-request.php");
+include("../../functions/sql-request-insert.php");
+include("../../functions/reload.php");
 
 session_start();
 logs("Session start");
@@ -15,80 +21,127 @@ if (!checkLogin()) {
     exit;
 }
 
-// Fonction pour vérifier si tous les éléments requis sont présents
+// Fonction pour vérifier les éléments requis
 function hasRequiredElements($data) {
     $requiredForfaitKeys = ['repas', 'hotel', 'kilometres', 'etape'];
-    $requiredHorsForfaitKeys = ['date', 'libelle', 'montant'];
     $requiredVisitorKeys = ['nom', 'prenom', 'id'];
 
-    // Vérification des frais forfaitisés
-    if (!isset($data['frais_forfait']) || !is_array($data['frais_forfait'])) {
-        return false;
-    }
+    if (!isset($data['frais_forfait']) || !is_array($data['frais_forfait'])) return false;
     foreach ($requiredForfaitKeys as $key) {
-        if (!isset($data['frais_forfait'][$key]['quantite']) || 
-            !is_numeric($data['frais_forfait'][$key]['quantite'])) {
+        if (!isset($data['frais_forfait'][$key]['quantite']) || !is_numeric($data['frais_forfait'][$key]['quantite'])) {
             return false;
         }
     }
 
-    // Vérification des frais hors forfait (au moins un élément requis)
-    if (!isset($data['frais_hors_forfait']) || !is_array($data['frais_hors_forfait']) || empty($data['frais_hors_forfait'])) {
-        return false;
-    }
-    foreach ($data['frais_hors_forfait'] as $frais) {
-        foreach ($requiredHorsForfaitKeys as $key) {
-            if (!isset($frais[$key]) || empty(trim($frais[$key]))) {
-                return false;
-            }
-        }
-    }
-
-    // Vérification des informations visiteur
     foreach ($requiredVisitorKeys as $key) {
-        if (!isset($data[$key]) || empty(trim($data[$key]))) {
-            return false;
-        }
+        if (!isset($data[$key]) || empty(trim($data[$key]))) return false;
     }
 
     return true;
+}
+
+// Fonction pour filtrer les frais hors forfait valides
+function filterValidHorsForfait($horsForfait) {
+    $requiredKeys = ['date', 'libelle', 'montant'];
+    $validHorsForfait = [];
+    
+    if (!isset($horsForfait) || !is_array($horsForfait)) return $validHorsForfait;
+
+    foreach ($horsForfait as $frais) {
+        $isValid = true;
+        foreach ($requiredKeys as $key) {
+            if (!isset($frais[$key]) || empty(trim($frais[$key]))) {
+                $isValid = false;
+                break;
+            }
+        }
+        if ($isValid) {
+            $validHorsForfait[] = $frais;
+        }
+    }
+    
+    return $validHorsForfait;
 }
 
 // Traitement de la soumission POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     logs("Début du traitement de la requête POST");
 
-    // Vérifier si tous les éléments requis sont présents
-    if (hasRequiredElements($_POST)) {
-        logs("Tous les éléments requis sont présents. Affichage des détails :");
 
-        // Log des frais forfaitisés
-        logs("Frais forfaitisés :");
-        $fraisForfait = $_POST['frais_forfait'];
-        foreach ($fraisForfait as $type => $details) {
-            logs(" - $type : Quantité = {$details['quantite']}");
+    try {
+        if (hasRequiredElements($_POST)) {
+            $idVisiteur = $_POST['id'];
+            $mois = date('Ym');
+            $dateCreation = date('Y-m-d');
+            $idEtat = 'CR';
+
+            // Calcul du montant total des frais forfaitisés
+            $tarifsForfait = [
+                'repas' => 20.00,
+                'hotel' => 80.00,
+                'kilometres' => 0.62,
+                'etape' => 110.00
+            ];
+            $montantTotal = 0;
+
+
+            foreach ($_POST['frais_forfait'] as $type => $details) {
+                $quantite = floatval($details['quantite']);
+                $montantTotal += $quantite * $tarifsForfait[$type];
+            }
+
+            // Filtrer et ajouter les frais hors forfait valides
+            $validHorsForfait = filterValidHorsForfait($_POST['frais_hors_forfait']);
+            foreach ($validHorsForfait as $frais) {
+                $montantTotal += floatval($frais['montant']);
+            }
+
+            if($montantTotal <= 0) {
+                alert('Impossible de sauvegarder vos fiches. Le montant est égale à 0.');
+                reload('form', '/GSB/pages/visiteur/form.php');
+            }
+
+            // Insertion dans NoteFrais
+            $sqlNoteFrais = "INSERT INTO NoteFrais (idVisiteur, mois, montantTotal, dateCreation, idEtat) VALUES (?, ?, ?, ?, ?)";
+            $paramsNoteFrais = [$idVisiteur, $mois, $montantTotal, $dateCreation, $idEtat];
+            logs("Requête NoteFrais : " . $sqlNoteFrais . " avec params " . json_encode($paramsNoteFrais));
+            RequestSqlInsert($sqlNoteFrais, $paramsNoteFrais);
+
+            logs("test");
+
+            // Insertion des frais hors forfait valides
+            if (!empty($validHorsForfait)) {
+                $sqlHorsForfait = "INSERT INTO LigneFraisHorsForfait (idVisiteur, mois, libelle, date, montant) 
+                                   VALUES (?, ?, ?, ?, ?)";
+                foreach ($validHorsForfait as $index => $frais) {
+                    $paramsHorsForfait = [
+                        $idVisiteur,
+                        $mois,
+                        $frais['libelle'],
+                        $frais['date'],
+                        floatval($frais['montant'])
+                    ];
+                    logs("Requête LigneFraisHorsForfait #$index : " . $sqlHorsForfait . " avec params " . json_encode($paramsHorsForfait));
+                    RequestSqlInsert($sqlHorsForfait, $paramsHorsForfait);
+                }
+            } else {
+                logs("Aucun frais hors forfait valide à insérer.");
+            }
+
+            // Redirection après succès
+            // header('Location: list.php');
+            exit;
+        } else {
+            logs("Erreur : Éléments requis manquants dans la requête : " . json_encode($_POST));
         }
-
-        // Log des frais hors forfait
-        logs("Frais hors forfait :");
-        foreach ($_POST['frais_hors_forfait'] as $index => $frais) {
-            logs(" - #$index : Date = {$frais['date']}, Libellé = {$frais['libelle']}, Montant = {$frais['montant']}");
-        }
-
-        // Log des informations visiteur
-        logs("Informations visiteur :");
-        logs(" - Nom = {$_POST['nom']}, Prénom = {$_POST['prenom']}, Matricule = {$_POST['id']}");
-
-    } else {
-        logs("Erreur : Tous les éléments requis ne sont pas présents dans la requête.");
-        logs("Contenu reçu : " . json_encode($_POST));
+    } catch (Exception $e) {
+        logs("Erreur lors du traitement : " . $e->getMessage());
     }
 
     logs("Fin du traitement de la requête POST");
 }
-
-// Le reste de votre code HTML/PHP ici...
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -212,12 +265,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 return;
             }
 
-            // Ajouter à la liste visuelle
             const li = document.createElement("li");
             li.textContent = `${date} - ${libelle}: ${montant} €`;
             document.getElementById("hors-forfait-list").appendChild(li);
 
-            // Ajouter les champs cachés au formulaire
             const form = document.getElementById("fraisForm");
             form.insertAdjacentHTML('beforeend', `
                 <input type="hidden" name="frais_hors_forfait[${horsForfaitIndex}][date]" value="${date}">
@@ -226,7 +277,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             `);
             horsForfaitIndex++;
 
-            // Réinitialiser les champs
             document.getElementById("date").value = "";
             document.getElementById("libelle").value = "";
             document.getElementById("montant").value = "";
