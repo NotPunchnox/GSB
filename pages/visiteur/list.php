@@ -15,15 +15,12 @@ if (!checkLogin()) {
     exit;
 }
 
-
 $données = RequestSQL("select * from NoteFrais where idVisiteur = \"" .$GLOBALS["id"] . "\"");
+foreach ($données as $row) {
+    logs($row, true);
+}
 
 ?>
-
-
-
-
-
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -59,7 +56,14 @@ $données = RequestSQL("select * from NoteFrais where idVisiteur = \"" .$GLOBALS
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="frais-list"></tbody>
+                <tbody id="frais-list">
+                    <tr>
+                        <td>Avril 2024</td>
+                        <td>1247 €</td>
+                        <td><span class="badge badge-green">Validée</span></td>
+                        <td><button class="details-btn" data-key="2024-04">Voir détails</button></td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>
@@ -67,7 +71,7 @@ $données = RequestSQL("select * from NoteFrais where idVisiteur = \"" .$GLOBALS
     <div class="side-panel" id="details-panel">
         <div class="side-panel-header">
             <h3 id="panel-title">Détails de la fiche</h3>
-            <button type="button" class="close-btn">&times;</button>
+            <button type="button" class="close-btn">×</button>
         </div>
         <div id="details-content"></div>
     </div>
@@ -82,71 +86,17 @@ $données = RequestSQL("select * from NoteFrais where idVisiteur = \"" .$GLOBALS
             const detailsContent = document.getElementById("details-content");
             const closeBtn = document.querySelector(".close-btn");
     
-            const fichesFrais = {
-                "2024-04": {
-                    periode: "Avril 2024", montant: "1247 €", statut: "Validée",
-                    forfaitises: [
-                        { type: "Repas restaurant", quantite: 15, prix: 29 },
-                        { type: "Nuitées hôtel", quantite: 10, prix: 80 },
-                        { type: "Frais kilométriques", quantite: 150, prix: 0.62 }
-                    ],
-                    nonForfaitises: [
-                        { libelle: "Parking", montant: 20, date: "05/04/2024" }
-                    ]
-                },
-                "2024-03": {
-                    periode: "Mars 2024", montant: "1020 €", statut: "En attente",
-                    forfaitises: [
-                        { type: "Repas restaurant", quantite: 10, prix: 29 }
-                    ],
-                    nonForfaitises: [
-                        { libelle: "Taxi", montant: 45, date: "12/03/2024" }
-                    ]
-                }
-            };
-    
-            Object.keys(fichesFrais).forEach(key => {
-                const option = document.createElement("option");
-                option.value = key;
-                option.textContent = fichesFrais[key].periode;
-                moisSelect.appendChild(option);
-            });
-    
             validerBtn.addEventListener("click", () => {
                 const selectedMonth = moisSelect.value;
                 fraisList.innerHTML = "";
-                if (fichesFrais[selectedMonth]) {
-                    const fiche = fichesFrais[selectedMonth];
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td>${fiche.periode}</td>
-                        <td>${fiche.montant}</td>
-                        <td><span class="badge badge-${fiche.statut === "Validée" ? "green" : "yellow"}">${fiche.statut}</span></td>
-                        <td><button class="details-btn" data-key="${selectedMonth}">Voir détails</button></td>
-                    `;
-                    fraisList.appendChild(row);
-                }
+                // La logique d'affichage des données sera gérée côté serveur ou via une autre source
             });
     
             fraisList.addEventListener("click", (e) => {
                 if (e.target.classList.contains("details-btn")) {
                     const key = e.target.getAttribute("data-key");
-                    const fiche = fichesFrais[key];
-                    panelTitle.textContent = `Détails de la fiche - ${fiche.periode}`;
-                    
-                    let detailsHtml = "<h4>Frais forfaitisés</h4><table><tr><th>Type</th><th>Quantité</th><th>Prix unitaire</th><th>Total</th></tr>";
-                    fiche.forfaitises.forEach(frais => {
-                        detailsHtml += `<tr><td>${frais.type}</td><td>${frais.quantite}</td><td>${frais.prix} €</td><td>${(frais.quantite * frais.prix).toFixed(2)} €</td></tr>`;
-                    });
-                    detailsHtml += "</table>";
-    
-                    detailsHtml += "<h4>Frais non forfaitisés</h4><table><tr><th>Libellé</th><th>Montant</th><th>Date</th></tr>";
-                    fiche.nonForfaitises.forEach(frais => {
-                        detailsHtml += `<tr><td>${frais.libelle}</td><td>${frais.montant} €</td><td>${frais.date}</td></tr>`;
-                    });
-                    detailsHtml += "</table>";
-    
-                    detailsContent.innerHTML = detailsHtml;
+                    panelTitle.textContent = `Détails de la fiche - ${key}`;
+                    // Les détails devront être chargés dynamiquement (par exemple via AJAX)
                     detailsPanel.classList.add("open");
                 }
             });
@@ -158,4 +108,3 @@ $données = RequestSQL("select * from NoteFrais where idVisiteur = \"" .$GLOBALS
     </script>
 </body>
 </html>
-
