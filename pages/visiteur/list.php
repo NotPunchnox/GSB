@@ -14,6 +14,9 @@ if (!checkLogin()) {
     header('Location: /GSB/');
     exit;
 }
+
+
+$données = RequestSQL("select * from NoteFrais where idVisiteur = " .$GLOBALS["id"]);
 ?>
 
 
