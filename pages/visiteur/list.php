@@ -1,3 +1,33 @@
+<?php include("../../functions/logs.php"); ?>
+<?php include("../../functions/create-cookie.php"); ?>
+<?php include("../../functions/alert.php"); ?>
+<?php include("../../functions/login.php"); ?>
+<?php include("../../functions/check-login.php"); ?>
+
+<?php
+session_start();
+
+logs("Session start");
+
+// Vérifier si l'utilisateur est déjà connecté, si oui le rediriger vers le dashboard
+if(!checkLogin()) {
+    header('Location: /GSB/');
+}
+
+
+?>
+
+
+
+
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -131,3 +161,4 @@
     </script>
 </body>
 </html>
+
