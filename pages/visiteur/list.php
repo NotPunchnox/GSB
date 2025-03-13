@@ -3,6 +3,7 @@
 <?php include("../../functions/alert.php"); ?>
 <?php include("../../functions/login.php"); ?>
 <?php include("../../functions/check-login.php"); ?>
+<?php include("../../functions/sql-request.php"); ?>
 
 <?php
 session_start();
@@ -17,7 +18,6 @@ if(!checkLogin()) {
 ?>
 <?php
 $données = requete('select * from Etat;');
-
 ?>
 
 
