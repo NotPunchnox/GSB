@@ -1,7 +1,7 @@
 
 <?php
 
-    function RequestSQL($request, $print=false) {
+    function RequestSQL($request, $params, $print=false) {
         // Tentative de connexion à la base de donnée
         try {
             $bdd = new PDO("mysql:host=localhost;dbname=gsbV2;charset=utf8", "Admin","AdminSupperSecretPassword");
@@ -11,7 +11,10 @@
             die('Erreur: ' . $e->getMessage());
         }
 
-        $data = $bdd->query($request);
+        // Préparer la requête SQL avec prepare pour éviter les injections SQL
+        $response = $bdd->prepare($request);
+        $response->execute($params);
+        $data = $response->fetchAll();
 
         if ($print) {
             foreach ($data as $row) {
