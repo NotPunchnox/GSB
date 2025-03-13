@@ -14,10 +14,11 @@ if(!checkLogin()) {
     header('Location: /GSB/');
 }
 
+?>
+<?php
+$données = requete('select * from Etat;');
 
 ?>
-
-
 
 
 
