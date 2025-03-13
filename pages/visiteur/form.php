@@ -9,8 +9,8 @@
 <body>
     <nav>
         <div>
-            <a href="form.html" class="active">Renseigner Fiche Frais</a>
-            <a href="list.html">Consulter Fiche Frais</a>
+            <a href="form.php" class="active">Renseigner Fiche Frais</a>
+            <a href="list.php">Consulter Fiche Frais</a>
         </div>
         <img class="svg" src="../../public/images/logout.svg" alt="logout">
     </nav>
