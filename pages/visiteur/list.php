@@ -4,7 +4,6 @@
 <?php include("../../functions/login.php"); ?>
 <?php include("../../functions/check-login.php"); ?>
 
-
 <?php
 session_start();
 
@@ -14,10 +13,6 @@ logs("Session start");
 if(!checkLogin()) {
     header('Location: /GSB/');
 }
-
-?>
-<?php
-// RequestSQL()
 ?>
 
 
