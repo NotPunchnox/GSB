@@ -14,6 +14,7 @@ if(!checkLogin()) {
     header('Location: /GSB/');
 }
 
+// $données = requete('select * from Etat;');
 
 ?>
 
