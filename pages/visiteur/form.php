@@ -3,6 +3,7 @@
 <?php include("../../functions/alert.php"); ?>
 <?php include("../../functions/login.php"); ?>
 <?php include("../../functions/check-login.php"); ?>
+<?php include("../../functions/sql-request.php"); ?>
 
 <?php
 session_start();
@@ -13,6 +14,8 @@ logs("Session start");
 if(!checkLogin()) {
     header('Location: /GSB/');
 }
+
+insert("select * from Etat");
 
 // $données = requete('select * from Etat;');
 

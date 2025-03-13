@@ -1,7 +1,7 @@
 <?php include('./logs.php'); ?>
 
 <?php
-    function Insert($request) {
+    function RequestSQL($request) {
         // Tentative de connexion à la base de donnée
         try {
             $bdd = new PDO("mysql:host=localhost;dbname=gsbV2;charset=utf8", "Admin","AdminSupperSecretPassword");
@@ -16,7 +16,7 @@
         $response->execute();
         $data = $response->fetch();
 
-        logs(json_encode($data), true);
+        logs($data, true);
 
         return $data;
     }
