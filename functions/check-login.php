@@ -19,6 +19,10 @@ function checkLogin() : bool {
         // Si non retourner False
         if(!isset($data['nom'])) return false;
 
+        $GLOBALS['nom'] = $data['nom'];
+        $GLOBALS['id'] = $data['id'];
+        $GLOBALS['prenom'] = $data['prenom'];
+
         // Si oui retourner true
         return true;
     
@@ -30,6 +34,11 @@ function checkLogin() : bool {
     
          // Si non retourner False
         if(!isset($data['nom'])) return false;
+
+        $GLOBALS['nom'] = $data['nom'];
+        $GLOBALS['id'] = $data['id'];
+        $GLOBALS['prenom'] = $data['prenom'];
+
 
         // Si oui retourner True
         return true;

@@ -1,3 +1,23 @@
+<?php include("../../functions/logs.php"); ?>
+<?php include("../../functions/create-cookie.php"); ?>
+<?php include("../../functions/alert.php"); ?>
+<?php include("../../functions/login.php"); ?>
+<?php include("../../functions/check-login.php"); ?>
+
+<?php
+session_start();
+
+logs("Session start");
+
+// Vérifier si l'utilisateur est déjà connecté, si oui le rediriger vers le dashboard
+if(!checkLogin()) {
+    header('Location: /GSB/');
+}
+
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -22,17 +42,28 @@
             <div class="grid">
                 <div class="form-group">
                     <label>Nom</label>
-                    <input type="text" value="Lailler" readonly>
+                    <?php echo "<input type=\"text\" value=\"" . $GLOBALS['nom'] . "\" readonly>"; ?>
                 </div>
                 <div class="form-group">
                     <label>Prénom</label>
-                    <input type="text" value="Samuel" readonly>
+                    <?php echo "<input type=\"text\" value=\"" . $GLOBALS['prenom'] . "\" readonly>"; ?>
                 </div>
                 <div class="form-group">
                     <label>Matricule</label>
-                    <input type="text" value="a131" readonly>
+                    <?php echo "<input type=\"text\" value=\"" . $GLOBALS['id'] . "\" readonly>"; ?>
                 </div>
             </div>
+        </div>
+
+        <div class="card">
+            <h3> hors forfait</h3>
+            <div class="grid">
+                <input type="date" id="date" required>
+                <input type="text" id="libelle" placeholder="Libellé" required>
+                <input type="number" id="montant" placeholder="Montant" required>
+                <button type="button" class="btn btn-blue" id="ajouter-frais">Ajouter</button>
+            </div>
+            <ul id="hors-forfait-list"></ul>
         </div>
 
         <div class="card">
@@ -51,17 +82,6 @@
             <div class="validate">
                 <button type="button" class="btn btn-green" id="valider-frais">Valider</button>
             </div>
-        </div>
-
-        <div class="card">
-            <h3> hors forfait</h3>
-            <div class="grid">
-                <input type="date" id="date" required>
-                <input type="text" id="libelle" placeholder="Libellé" required>
-                <input type="number" id="montant" placeholder="Montant" required>
-                <button type="button" class="btn btn-blue" id="ajouter-frais">Ajouter</button>
-            </div>
-            <ul id="hors-forfait-list"></ul>
         </div>
     </div>
 

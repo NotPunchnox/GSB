@@ -29,6 +29,7 @@ if (isset($_POST['login']) && isset($_POST['mdp'])) {
 
         // initialisation de la session
         $_SESSION['nom'] = $data['nom'];
+        $_SESSION['prenom'] = $data['prenom'];
         $_SESSION['id'] = $data['id'];
         $_SESSION['mdp'] = $data['mdp'];
         $_SESSION['login'] = $data['login'];
