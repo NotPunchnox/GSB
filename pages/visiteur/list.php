@@ -1,23 +1,20 @@
-<?php include("../../functions/logs.php"); ?>
-<?php include("../../functions/create-cookie.php"); ?>
-<?php include("../../functions/alert.php"); ?>
-<?php include("../../functions/login.php"); ?>
-<?php include("../../functions/check-login.php"); ?>
-
 <?php
-session_start();
+include("../../functions/logs.php");
+include("../../functions/create-cookie.php");
+include("../../functions/alert.php");
+include("../../functions/login.php");
+include("../../functions/check-login.php");
+include("../../functions/sql-request.php");
 
+session_start();
 logs("Session start");
 
-// Vérifier si l'utilisateur est déjà connecté, si oui le rediriger vers le dashboard
-if(!checkLogin()) {
+// Redirection si non connecté
+if (!checkLogin()) {
     header('Location: /GSB/');
+    exit;
 }
 ?>
-
-
-
-
 
 
 
