@@ -28,7 +28,7 @@ function checkLogin() : bool {
     
     } else if(isset($_SESSION['mdp']) && isset($_SESSION['login'])) {
         // Vérifier si l'utilisateur a une session
-
+        logs($_SESSION['']);
         // Vérifier si l'utilisateur existe dans la db
         $data = Login($_SESSION['login'], $_SESSION['mdp']);
     

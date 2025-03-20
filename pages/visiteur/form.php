@@ -10,6 +10,8 @@ include("../../functions/reload.php");
 session_start();
 logs("Session start");
 
+logs($_SESSION);
+
 // Redirection si non connecté
 if (!checkLogin()) {
     header('Location: /GSB/');
@@ -246,7 +248,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <a href="form.php" class="active">Renseigner Fiche Frais</a>
             <a href="list.php">Consulter Fiche Frais</a>
         </div>
-        <a href="../../logout.php">
+        <a href="/GSB/pages/auth/logout.php">
             <img class="svg" src="../../public/images/logout.svg" alt="logout">
         </a>
     </nav>
