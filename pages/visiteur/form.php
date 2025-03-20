@@ -14,7 +14,7 @@ logs($_SESSION);
 
 // Redirection si non connecté
 if (!checkLogin()) {
-    header('Location: /GSB/');
+    header('Location: /');
     exit;
 }
 
@@ -138,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if($montantTotal <= 0) {
                 alert('Impossible de sauvegarder votre fiche. Le montant total est égal à 0.');
-                reload('form', '/GSB/pages/visiteur/form.php');
+                reload('form', '/pages/visiteur/form.php');
                 exit;
             }
 
@@ -217,7 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Redirection après succès
             alert('Votre fiche de frais a été sauvegardée avec succès!');
-            reload("Renseigner Fiche Frais", "/GSB/pages/visiteur/form.php");
+            reload("Renseigner Fiche Frais", "/pages/visiteur/form.php");
             exit;
         } else {
             logs("Erreur: Éléments requis manquants dans la requête");
@@ -248,7 +248,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <a href="form.php" class="active">Renseigner Fiche Frais</a>
             <a href="list.php">Consulter Fiche Frais</a>
         </div>
-        <a href="/GSB/pages/auth/logout.php">
+        <a href="/pages/auth/logout.php">
             <img class="svg" src="../../public/images/logout.svg" alt="logout">
         </a>
     </nav>
