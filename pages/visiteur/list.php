@@ -11,7 +11,7 @@ logs("Session start");
 
 // Redirection si non connecté
 if (!checkLogin()) {
-    header('Location: /');
+    header('Location: /GSB/');
     exit;
 }
 
@@ -105,7 +105,7 @@ function getEtatClass($idEtat) {
             <a href="form.php">Renseigner Fiche Frais</a>
             <a href="list.php" class="active">Consulter Fiche Frais</a>
         </div>
-        <a href="/pages/auth/logout.php">
+        <a href="/GSB/pages/auth/logout.php">
             <img class="svg" src="../../public/images/logout.svg" alt="logout">
         </a>
     </nav>

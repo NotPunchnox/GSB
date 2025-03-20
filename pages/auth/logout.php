@@ -13,6 +13,6 @@ $_SESSION['id'] = "";
 $_SESSION['mdp'] = "";
 $_SESSION['login'] = "";
 
-header("Location: /");
+header("Location: /GSB/");
 
 ?>
