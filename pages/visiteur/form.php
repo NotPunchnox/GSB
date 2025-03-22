@@ -4,13 +4,11 @@ session_start();
 // Include functions
 include("../../functions/index.php");
 
-// Redirect if not logged in
 if (!checkLogin()) {
     header('Location: ' . $GLOBALS['baseURL']);
     exit;
 }
 
-// Mapping and tariffs for forfaitized expenses (aligned with DB)
 $fraisForfaitMapping = [
     'etape' => 'ETP',
     'kilometres' => 'KM',
@@ -21,10 +19,9 @@ $tarifsForfait = [
     'ETP' => 110.00,
     'KM' => 0.62,
     'NUI' => 80.00,
-    'REP' => 25.00 // Aligned with FraisForfait table
+    'REP' => 25.00
 ];
 
-// Validate required POST data
 function hasRequiredElements($data) {
     $requiredKeys = ['nom', 'prenom', 'id'];
     foreach ($requiredKeys as $key) {
@@ -35,7 +32,6 @@ function hasRequiredElements($data) {
     return !empty(array_filter($fraisForfait, fn($f) => ($f['quantite'] ?? 0) > 0)) || !empty(filterValidHorsForfait($fraisHorsForfait));
 }
 
-// Filter valid hors forfait expenses
 function filterValidHorsForfait($horsForfait) {
     if (!is_array($horsForfait)) return [];
     $requiredKeys = ['date', 'libelle', 'montant'];
@@ -47,7 +43,6 @@ function filterValidHorsForfait($horsForfait) {
     });
 }
 
-// Process POST submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && hasRequiredElements($_POST)) {
     try {
         $idVisiteur = $_POST['id'];
@@ -55,7 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && hasRequiredElements($_POST)) {
         $dateCreation = date('Y-m-d');
         $idEtat = 'CR';
 
-        // Calculate forfaitized expenses
         $montantTotalForfait = 0;
         $fraisForfaitData = $_POST['frais_forfait'] ?? [];
         foreach ($fraisForfaitData as $type => $details) {
@@ -64,21 +58,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && hasRequiredElements($_POST)) {
             }
         }
 
-        // Calculate hors forfait expenses
         $validHorsForfait = filterValidHorsForfait($_POST['frais_hors_forfait'] ?? []);
         $montantTotalHorsForfait = array_sum(array_column($validHorsForfait, 'montant'));
 
         $montantTotal = $montantTotalForfait + $montantTotalHorsForfait;
         if ($montantTotal <= 0) throw new Exception("Montant total doit être supérieur à 0");
 
-        // Insert or update FicheFrais
         $sqlFicheFrais = "INSERT INTO FicheFrais (idVisiteur, mois, nbJustificatifs, montantValide, dateModif, idEtat) 
                           VALUES (?, ?, ?, ?, ?, ?) 
                           ON DUPLICATE KEY UPDATE nbJustificatifs = ?, montantValide = ?, dateModif = ?";
         $nbJustificatifs = count($validHorsForfait);
         RequestSqlInsert($sqlFicheFrais, [$idVisiteur, $mois, $nbJustificatifs, $montantTotal, $dateCreation, $idEtat, $nbJustificatifs, $montantTotal, $dateCreation]);
 
-        // Clear and insert forfaitized expenses
         RequestSqlInsert("DELETE FROM LigneFraisForfait WHERE idVisiteur = ? AND mois = ?", [$idVisiteur, $mois]);
         foreach ($fraisForfaitData as $type => $details) {
             if (isset($fraisForfaitMapping[$type]) && ($quantite = intval($details['quantite'] ?? 0)) > 0) {
@@ -87,13 +78,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && hasRequiredElements($_POST)) {
             }
         }
 
-        // Insert hors forfait expenses
         foreach ($validHorsForfait as $frais) {
             $sqlHorsForfait = "INSERT INTO LigneFraisHorsForfait (idVisiteur, mois, libelle, date, montant) VALUES (?, ?, ?, ?, ?)";
             RequestSqlInsert($sqlHorsForfait, [$idVisiteur, $mois, $frais['libelle'], $frais['date'], floatval($frais['montant'])]);
         }
 
-        // Insert or update NoteFrais
         $sqlNoteFrais = "INSERT INTO NoteFrais (idVisiteur, mois, montantTotal, dateCreation, idEtat) 
                          VALUES (?, ?, ?, ?, ?) 
                          ON DUPLICATE KEY UPDATE montantTotal = ?, dateModif = CURRENT_TIMESTAMP";
