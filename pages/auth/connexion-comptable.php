@@ -7,7 +7,7 @@ include("../../functions/index.php");
 
 // Vérifier si l'utilisateur est déjà connecté, si oui le rediriger vers le dashboard
 if(checkLogin()) {
-    header('Location: /GSB/pages/comptable/dashboard.html');
+    header('Location: ' . $GLOBALS['baseURL'] . 'pages/comptable/dashboard.html');
 }
 
 // Vérifier si les valeurs on été set
@@ -16,12 +16,10 @@ if (isset($_POST['login']) && isset($_POST['mdp'])) {
     
     $data = Login($_POST['login'], $_POST['mdp']);
 
-    logs($data, true);
+    // logs($data, true);
     
     // Vérifier si l'utilisateur existe
     if ($data['nom'] !== null) {
-
-        // logs($data, true);
 
         // initialisation de la session
         $_SESSION['nom'] = $data['nom'];
@@ -36,7 +34,7 @@ if (isset($_POST['login']) && isset($_POST['mdp'])) {
         }
 
         // Effectuer la redirection vers le dashboard.
-        header('Location: /GSB/pages/comptable/dashboard.html');
+        header('Location: ' . $GLOBALS['baseURL'] . 'pages/comptable/dashboard.html');
     } else {
         // Si l'utilisateur n'est pas trouvé, alors les retourner un message d'erreur
         alert('Vos identifiants sont invalides.');

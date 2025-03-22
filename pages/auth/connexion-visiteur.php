@@ -8,7 +8,7 @@ include("../../functions/index.php");
 
 // Vérifier si l'utilisateur est déjà connecté, si oui le rediriger vers le dashboard
 if(checkLogin()) {
-    header('Location: /GSB/pages/visiteur/form.php');
+    header('Location: ' . $GLOBALS['baseURL'] . 'pages/visiteur/form.php');
 }
 
 // Vérifier si les valeurs on été set
@@ -38,7 +38,7 @@ if (isset($_POST['login']) && isset($_POST['mdp'])) {
         }
 
         // Effectuer la redirection vers le dashboard.
-        header('Location: /GSB/pages/visiteur/form.php');
+        header('Location: ' . $GLOBALS['baseURL'] . 'pages/visiteur/form.php');
     } else {
         // Si l'utilisateur n'est pas trouvé, alors les retourner un message d'erreur
         alert('Vos identifiants sont invalides.');

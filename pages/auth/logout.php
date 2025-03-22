@@ -14,6 +14,6 @@ $_SESSION['id'] = "";
 $_SESSION['mdp'] = "";
 $_SESSION['login'] = "";
 
-header("Location: /GSB/");
+header("Location: " . $GLOBALS['baseURL'] . "");
 
 ?>

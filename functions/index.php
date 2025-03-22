@@ -1,4 +1,8 @@
 <?php
+
+// Init config
+include(__DIR__ . "/config.php");
+
 // Auth
 include(__DIR__ . "/auth/check-login.php");
 include(__DIR__ . "/auth/login.php");
