@@ -5,6 +5,7 @@ include(__DIR__ . "/auth/login.php");
 
 // Cookies
 include(__DIR__ . "/cookies/create.php");
+include(__DIR__ . "/cookies/remove.php");
 
 // JS
 include(__DIR__ . "/js/alert.php");

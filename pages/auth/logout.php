@@ -5,8 +5,8 @@ session_start();
 include("../../functions/index.php");
 
 // Reset le cookie
-setcookie("GSB", "", 0);
-setcookie("PHPSESSID", "", 0);
+deleteCookie("GSB");
+deleteCookie("PHPSESSID");
 
 // Reset la session
 $_SESSION['nom'] = "";
