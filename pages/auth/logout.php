@@ -1,7 +1,8 @@
 <?php
 session_start();
 
-include("../../functions/create-cookie.php");
+// Inclure les fonctions
+include("../../functions/index.php");
 
 // Reset le cookie
 setcookie("GSB", "", 0);

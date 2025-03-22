@@ -1,11 +1,9 @@
-<?php include("../../functions/logs.php"); ?>
-<?php include("../../functions/create-cookie.php"); ?>
-<?php include("../../functions/alert.php"); ?>
-<?php include("../../functions/login.php"); ?>
-<?php include("../../functions/check-login.php"); ?>
-
 <?php
 session_start();
+
+// Inclure les fonctions
+include("../../functions/index.php");
+
 
 // Vérifier si l'utilisateur est déjà connecté, si oui le rediriger vers le dashboard
 if(checkLogin()) {

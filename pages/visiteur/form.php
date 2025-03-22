@@ -1,16 +1,8 @@
 <?php
-include("../../functions/logs.php");
-include("../../functions/create-cookie.php");
-include("../../functions/alert.php");
-include("../../functions/login.php");
-include("../../functions/check-login.php");
-include("../../functions/sql-request-insert.php");
-include("../../functions/reload.php");
-
 session_start();
-logs("Session start");
 
-logs($_SESSION);
+// Inclure les fonctions
+include("../../functions/index.php");
 
 // Redirection si non connecté
 if (!checkLogin()) {
