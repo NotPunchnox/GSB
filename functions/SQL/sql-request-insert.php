@@ -15,7 +15,7 @@
         // foreach ($bdd->query($request) as $row) {
         //     logs($row, true);
         // }
-        logs($request . $params);
+        // logs($request . $params);
         // Préparer la requête SQL avec prepare pour éviter les injections SQL
         $response = $bdd->prepare($request);
         $response->execute($params);

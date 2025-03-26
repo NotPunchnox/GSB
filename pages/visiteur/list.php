@@ -1,54 +1,54 @@
 <?php
 session_start();
 
-// Include functions
 include("../../functions/index.php");
 
-// Redirect if not logged in
 if (!checkLogin()) {
     header('Location: ' . $GLOBALS['baseURL']);
     exit;
 }
 
-// Fetch all expense notes for the user
-$notesFrais = RequestSQL("SELECT * FROM NoteFrais WHERE idVisiteur = ? ORDER BY mois DESC", [$GLOBALS["id"]]);
-$moisDisponibles = RequestSQL("SELECT DISTINCT mois FROM NoteFrais WHERE idVisiteur = ? ORDER BY mois DESC", [$GLOBALS["id"]]);
+$moisSelectionne = $_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['mois-select-dropdown']) ? $_POST['mois-select-dropdown'] : null;
+$moisDetails = $_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['mois-details']) ? $_POST['mois-details'] : null;
 
-// Process month selection
-$moisSelectionne = $_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['mois-select']) ? $_POST['mois-select'] : null;
+$mois = $moisSelectionne == null ? $moisDetails : $moisSelectionne;
+
+logs($mois);
+
 $detailsFiche = $fraisForfaitises = $fraisHorsForfait = null;
 
-if ($moisSelectionne) {
-    // Fetch aggregated expense note details (sum montantTotal if multiple notes)
+
+$notesFrais = RequestSQL("SELECT * FROM NoteFrais WHERE idVisiteur = ? AND mois = ? ORDER BY mois DESC", [$GLOBALS["id"], $mois]);
+$moisDisponibles = RequestSQL("SELECT DISTINCT mois FROM NoteFrais WHERE idVisiteur = ? ORDER BY mois DESC", [$GLOBALS["id"]]);
+
+if ($moisDetails) {
+
     $detailsFiche = RequestSQL(
         "SELECT nf.mois, SUM(nf.montantTotal) as montantTotal, MIN(nf.dateCreation) as dateCreation, e.libelle as etatLibelle, nf.idEtat
          FROM NoteFrais nf 
          JOIN Etat e ON nf.idEtat = e.id 
          WHERE nf.idVisiteur = ? AND nf.mois = ?
          GROUP BY nf.mois, e.libelle, nf.idEtat",
-        [$GLOBALS["id"], $moisSelectionne]
+        [$GLOBALS["id"], $mois]
     )[0] ?? null;
 
     if ($detailsFiche) {
-        // Fetch all forfaitized expenses for the month
         $fraisForfaitises = RequestSQL(
             "SELECT lff.*, ff.libelle as typeFrais, ff.montant as montantUnitaire 
              FROM LigneFraisForfait lff 
              JOIN FraisForfait ff ON lff.idFraisForfait = ff.id 
              WHERE lff.idVisiteur = ? AND lff.mois = ?",
-            [$GLOBALS["id"], $moisSelectionne]
+            [$GLOBALS["id"], $mois]
         );
 
-        // Fetch all non-forfaitized expenses for the month
         $fraisHorsForfait = RequestSQL(
             "SELECT * FROM LigneFraisHorsForfait 
-             WHERE idVisiteur = ? AND mois = ?",
-            [$GLOBALS["id"], $moisSelectionne]
+            WHERE idVisiteur = ? AND mois = ?",
+            [$GLOBALS["id"], $mois]
         );
     }
 }
 
-// Format month (YYYYMM -> "Mois YYYY")
 function formatMois($moisCode) {
     $nomsMois = [
         '01' => 'Janvier', '02' => 'Février', '03' => 'Mars', '04' => 'Avril',
@@ -58,7 +58,6 @@ function formatMois($moisCode) {
     return $nomsMois[substr($moisCode, 4, 2)] . ' ' . substr($moisCode, 0, 4);
 }
 
-// Get CSS class for state
 function getEtatClass($idEtat) {
     $classes = [
         'VA' => 'badge-green', 'RB' => 'badge-blue', 'CL' => 'badge-gray',
@@ -91,11 +90,11 @@ function getEtatClass($idEtat) {
         <h2 class="mb-4">Consultation des fiches de frais</h2>
         <div class="card">
             <form method="POST" class="text-right mb-4">
-                <label for="mois-select">Sélectionner un mois :</label>
-                <select id="mois-select" name="mois-select" class="search-input" style="max-width: 300px;">
+                <label for="mois-select-dropdown">Sélectionner un mois :</label>
+                <select id="mois-select-dropdown" name="mois-select-dropdown" class="search-input" style="max-width: 300px;">
                     <option value="">Choisir un mois</option>
                     <?php foreach ($moisDisponibles as $mois): ?>
-                        <option value="<?php echo $mois['mois']; ?>" <?php echo $moisSelectionne === $mois['mois'] ? 'selected' : ''; ?>>
+                        <option value="<?php echo $mois['mois']; ?>" <?php echo $mois === $mois['mois'] ? 'selected' : ''; ?>>
                             <?php echo formatMois($mois['mois']); ?>
                         </option>
                     <?php endforeach; ?>
@@ -122,7 +121,7 @@ function getEtatClass($idEtat) {
                             <td><span class="badge <?php echo getEtatClass($frais['idEtat']); ?>"><?php echo ['CR' => 'Créée', 'VA' => 'Validée', 'RB' => 'Remboursée', 'CL' => 'Clôturée', 'RE' => 'Refusée'][$frais['idEtat']] ?? $frais['idEtat']; ?></span></td>
                             <td>
                                 <form method="POST" style="display: inline;">
-                                    <input type="hidden" name="mois-select" value="<?php echo $frais['mois']; ?>">
+                                    <input type="hidden" name="mois-details" value="<?php echo $frais['mois']; ?>">
                                     <button type="submit" class="details-btn">Voir détails</button>
                                 </form>
                             </td>
@@ -134,7 +133,7 @@ function getEtatClass($idEtat) {
 
         <?php if ($detailsFiche): ?>
             <div class="card mt-4">
-                <h3>Détails de la fiche - <?php echo formatMois($moisSelectionne); ?></h3>
+                <h3>Détails de la fiche - <?php echo formatMois($moisDetails); ?></h3>
                 <div class="info-section">
                     <div class="info-item">
                         <span class="info-label">Montant total:</span>
@@ -187,6 +186,7 @@ function getEtatClass($idEtat) {
                         </thead>
                         <tbody>
                             <?php $totalHorsForfait = 0; foreach ($fraisHorsForfait as $frais):
+                                logs($frais);
                                 $totalHorsForfait += $frais['montant']; ?>
                                 <tr>
                                     <td><?php echo date('d/m/Y', strtotime($frais['date'])); ?></td>

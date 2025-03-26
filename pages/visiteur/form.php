@@ -93,12 +93,11 @@ $tarifsForfait = [
     'ETP' => 110.00,
     'KM' => 0.62,
     'NUI' => 80.00,
-    'REP' => 20.00
+    'REP' => 25.00
 ];
 
 // Traitement de la soumission POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    logs("Début du traitement de la requête POST: " . json_encode($_POST));
 
     try {
         // Validation des données soumises
@@ -137,7 +136,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Vérifier si une fiche existe déjà pour ce mois et créer ou mettre à jour
             $sqlCheckFiche = "SELECT idVisiteur, mois FROM FicheFrais WHERE idVisiteur = ? AND mois = ?";
             
-            // Faire une insertion ou mise à jour directe sans vérifier explicitement l'existence
             $sqlFicheFrais = "INSERT INTO FicheFrais (idVisiteur, mois, nbJustificatifs, montantValide, dateModif, idEtat) 
                               VALUES (?, ?, ?, ?, ?, ?) 
                               ON DUPLICATE KEY UPDATE 
@@ -155,15 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $idEtat
             ];
             
-            logs("Requête FicheFrais: " . $sqlFicheFrais . " avec params " . json_encode($paramsFicheFrais));
             $resultFicheFrais = RequestSqlInsert($sqlFicheFrais, $paramsFicheFrais);
-            logs("Résultat FicheFrais: " . json_encode($resultFicheFrais));
-
-            // 2. Supprimer les anciennes lignes de frais forfaitisés pour ce mois
-            $sqlDeleteLigneForfait = "DELETE FROM LigneFraisForfait WHERE idVisiteur = ? AND mois = ?";
-            $paramsDeleteLigneForfait = [$idVisiteur, $mois];
-            logs("Suppression LigneFraisForfait: " . json_encode($paramsDeleteLigneForfait));
-            RequestSqlInsert($sqlDeleteLigneForfait, $paramsDeleteLigneForfait);
 
             // 3. Insérer les frais forfaitisés
             foreach ($_POST['frais_forfait'] as $type => $details) {
@@ -175,7 +165,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $sqlLigneForfait = "INSERT INTO LigneFraisForfait (idVisiteur, mois, idFraisForfait, quantite) 
                                             VALUES (?, ?, ?, ?)";
                         $paramsLigneForfait = [$idVisiteur, $mois, $idFraisForfait, $quantite];
-                        logs("Insertion LigneFraisForfait: " . json_encode($paramsLigneForfait));
                         RequestSqlInsert($sqlLigneForfait, $paramsLigneForfait);
                     }
                 }
@@ -193,7 +182,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     floatval($frais['montant'])
                 ];
                 
-                logs("Insertion LigneFraisHorsForfait: " . json_encode($paramsHorsForfait));
                 RequestSqlInsert($sqlHorsForfait, $paramsHorsForfait);
             }
             
@@ -204,7 +192,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                              montantTotal = VALUES(montantTotal),
                              dateModif = CURRENT_TIMESTAMP";
             $paramsNoteFrais = [$idVisiteur, $mois, $montantTotal, $dateCreation, $idEtat];
-            logs("Insertion/MAJ NoteFrais: " . json_encode($paramsNoteFrais));
             RequestSqlInsert($sqlNoteFrais, $paramsNoteFrais);
 
             // Redirection après succès
@@ -217,7 +204,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Ne pas rediriger pour permettre à l'utilisateur de corriger
         }
     } catch (Exception $e) {
-        logs("Erreur lors du traitement: " . $e->getMessage());
+        // logs("Erreur lors du traitement: " . $e->getMessage());
         alert('Une erreur est survenue lors du traitement de votre demande: ' . $e->getMessage());
         // Ne pas rediriger pour permettre à l'utilisateur de corriger
     }
@@ -240,7 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <a href="form.php" class="active">Renseigner Fiche Frais</a>
             <a href="list.php">Consulter Fiche Frais</a>
         </div>
-        <a href="" . $GLOBALS['baseURL'] . "pages/auth/logout.php">
+        <a href="<?php echo $GLOBALS['baseURL']; ?>pages/auth/logout.php">
             <img class="svg" src="../../public/images/logout.svg" alt="logout">
         </a>
     </nav>
@@ -295,8 +282,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <tbody id="forfaitises">
                         <tr>
                             <td>Repas restaurant</td>
-                            <td><input type="number" name="frais_forfait[repas][quantite]" class="quantite" data-prix="20.00" value="0" min="0"></td>
-                            <td>20.00 €</td>
+                            <td><input type="number" name="frais_forfait[repas][quantite]" class="quantite" data-prix="25.00" value="0" min="0"></td>
+                            <td>25.00 €</td>
                             <td class="total">0 €</td>
                         </tr>
                         <tr>
