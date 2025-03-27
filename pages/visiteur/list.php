@@ -170,6 +170,8 @@ function getEtatClass($idEtat) {
                             <?php endforeach; ?>
                             <tr class="total-row">
                                 <td colspan="3" class="text-right"><strong>Total frais forfaitisés:</strong></td>
+                                <td></td>
+                                <td></td>
                                 <td><strong><?php echo number_format($totalForfaitises, 2, ',', ' '); ?> €</strong></td>
                             </tr>
                         </tbody>
@@ -196,6 +198,7 @@ function getEtatClass($idEtat) {
                             <?php endforeach; ?>
                             <tr class="total-row">
                                 <td colspan="2" class="text-right"><strong>Total frais hors forfait:</strong></td>
+                                <td></td>
                                 <td><strong><?php echo number_format($totalHorsForfait, 2, ',', ' '); ?> €</strong></td>
                             </tr>
                         </tbody>
