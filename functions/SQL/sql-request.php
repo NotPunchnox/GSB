@@ -21,8 +21,7 @@
                 logs($row, true);
             }
         }
-        // logs($data, true);
-
+        
         return $data;
     }
 
