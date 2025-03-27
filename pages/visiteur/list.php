@@ -8,8 +8,8 @@ if (!checkLogin()) {
     exit;
 }
 
-$moisSelectionne = $_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['mois-select-dropdown']) ? $_POST['mois-select-dropdown'] : null;
-$moisDetails = $_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['mois-details']) ? $_POST['mois-details'] : null;
+$moisSelectionne = $_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['mois-select-dropdown']) ? htmlspecialchars($_POST['mois-select-dropdown']) : null;
+$moisDetails = $_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['mois-details']) ? htmlspecialchars($_POST['mois-details']) : null;
 
 $mois = $moisSelectionne == null ? $moisDetails : $moisSelectionne;
 
