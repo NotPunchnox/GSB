@@ -102,14 +102,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         // Validation des données soumises
         if (hasRequiredElements($_POST)) {
-            $idVisiteur = $_POST['id'];
+            $idVisiteur = htmlspecialchars($_POST['id']);
             $mois = date('Ym');
             $dateCreation = date('Y-m-d');
             $idEtat = 'CR'; // État "Créé"
 
             // Calcul du montant total des frais forfaitisés
             $montantTotalForfait = 0;
-            foreach ($_POST['frais_forfait'] as $type => $details) {
+            foreach (htmlspecialchars($_POST['frais_forfait']) as $type => $details) {
                 if (isset($fraisForfaitMapping[$type])) {
                     $idFraisForfait = $fraisForfaitMapping[$type];
                     $quantite = floatval($details['quantite']);
@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             // Filtrer et ajouter les frais hors forfait valides
-            $validHorsForfait = filterValidHorsForfait($_POST['frais_hors_forfait'] ?? []);
+            $validHorsForfait = filterValidHorsForfait(htmlspecialchars($_POST['frais_hors_forfait'] ?? []));
             $montantTotalHorsForfait = 0;
             foreach ($validHorsForfait as $frais) {
                 $montantTotalHorsForfait += floatval($frais['montant']);
