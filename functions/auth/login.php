@@ -14,6 +14,8 @@
         $response->execute(array($login, $password));
         $data = $response->fetch();
 
+        sleep(1);
+
         return $data;
     }
 

@@ -39,7 +39,6 @@ function checkLogin() : bool {
         $GLOBALS['id'] = $data['id'];
         $GLOBALS['prenom'] = $data['prenom'];
 
-
         // Si oui retourner True
         return true;
     } else return false;

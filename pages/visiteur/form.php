@@ -102,14 +102,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         // Validation des données soumises
         if (hasRequiredElements($_POST)) {
-            $idVisiteur = htmlspecialchars($_POST['id']);
+            $idVisiteur = ($_POST['id']);
+            logs(htmlspecialchars($_POST['id']));
             $mois = date('Ym');
             $dateCreation = date('Y-m-d');
             $idEtat = 'CR'; // État "Créé"
 
             // Calcul du montant total des frais forfaitisés
             $montantTotalForfait = 0;
-            foreach (htmlspecialchars($_POST['frais_forfait']) as $type => $details) {
+            foreach (($_POST['frais_forfait']) as $type => $details) {
                 if (isset($fraisForfaitMapping[$type])) {
                     $idFraisForfait = $fraisForfaitMapping[$type];
                     $quantite = floatval($details['quantite']);
@@ -118,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             // Filtrer et ajouter les frais hors forfait valides
-            $validHorsForfait = filterValidHorsForfait(htmlspecialchars($_POST['frais_hors_forfait'] ?? []));
+            $validHorsForfait = filterValidHorsForfait(($_POST['frais_hors_forfait'] ?? []));
             $montantTotalHorsForfait = 0;
             foreach ($validHorsForfait as $frais) {
                 $montantTotalHorsForfait += floatval($frais['montant']);
@@ -136,17 +137,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Vérifier si une fiche existe déjà pour ce mois et créer ou mettre à jour
             $sqlCheckFiche = "SELECT idVisiteur, mois FROM FicheFrais WHERE idVisiteur = ? AND mois = ?";
             
-            $sqlFicheFrais = "INSERT INTO FicheFrais (idVisiteur, mois, nbJustificatifs, montantValide, dateModif, idEtat) 
-                              VALUES (?, ?, ?, ?, ?, ?) 
-                              ON DUPLICATE KEY UPDATE 
-                              nbJustificatifs = VALUES(nbJustificatifs), 
-                              montantValide = VALUES(montantValide), 
-                              dateModif = VALUES(dateModif)";
+            $sqlFicheFrais = "INSERT INTO FicheFrais (idVisiteur, mois, nbJustificatifs, montantValide, dateModif, idEtat)  VALUES (?, ?, ?, ?, ?, ?)  ON DUPLICATE KEY UPDATE  nbJustificatifs = VALUES(nbJustificatifs),  montantValide = VALUES(montantValide),  dateModif = VALUES(dateModif)";
             
             $nbJustificatifs = count($validHorsForfait);
             $paramsFicheFrais = [
                 $idVisiteur, 
-                $frais['date'], 
+                $mois, 
                 $nbJustificatifs, 
                 $montantTotal, 
                 $dateCreation, 
@@ -186,11 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             
             // 5. Insérer ou mettre à jour la note de frais
-            $sqlNoteFrais = "INSERT INTO NoteFrais (idVisiteur, mois, montantTotal, dateCreation, idEtat) 
-                             VALUES (?, ?, ?, ?, ?)
-                             ON DUPLICATE KEY UPDATE 
-                             montantTotal = VALUES(montantTotal),
-                             dateModif = CURRENT_TIMESTAMP";
+            $sqlNoteFrais = "INSERT INTO NoteFrais (idVisiteur, mois, montantTotal, dateCreation, idEtat)  VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE  montantTotal = VALUES(montantTotal), dateModif = CURRENT_TIMESTAMP";
             $paramsNoteFrais = [$idVisiteur, $mois, $montantTotal, $dateCreation, $idEtat];
             RequestSqlInsert($sqlNoteFrais, $paramsNoteFrais);
 
@@ -205,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } catch (Exception $e) {
         // logs("Erreur lors du traitement: " . $e->getMessage());
-        alert('Une erreur est survenue lors du traitement de votre demande: ' . $e->getMessage());
+        // alert('Une erreur est survenue lors du traitement de votre demande.');
         // Ne pas rediriger pour permettre à l'utilisateur de corriger
     }
 
@@ -242,15 +234,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="grid">
                     <div class="form-group">
                         <label>Nom</label>
-                        <?php echo "<input type=\"text\" name=\"nom\" value=\"" . htmlspecialchars($GLOBALS['nom']) . "\" readonly>"; ?>
+                        <?php echo "<input type=\"text\" name=\"nom\" value=\"" . ($GLOBALS['nom']) . "\" readonly>"; ?>
                     </div>
                     <div class="form-group">
                         <label>Prénom</label>
-                        <?php echo "<input type=\"text\" name=\"prenom\" value=\"" . htmlspecialchars($GLOBALS['prenom']) . "\" readonly>"; ?>
+                        <?php echo "<input type=\"text\" name=\"prenom\" value=\"" . ($GLOBALS['prenom']) . "\" readonly>"; ?>
                     </div>
                     <div class="form-group">
                         <label>Matricule</label>
-                        <?php echo "<input type=\"text\" name=\"id\" value=\"" . htmlspecialchars($GLOBALS['id']) . "\" readonly>"; ?>
+                        <?php echo "<input type=\"text\" name=\"id\" value=\"" . ($GLOBALS['id']) . "\" readonly>"; ?>
                     </div>
                 </div>
             </div>

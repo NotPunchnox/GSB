@@ -12,10 +12,13 @@
             die('Erreur: ' . $e->getMessage());
         }
 
+        logs("test2");
+
         // foreach ($bdd->query($request) as $row) {
         //     logs($row, true);
         // }
-        // logs($request . $params);
+        logs($request);
+        logs($params, true);
         // Préparer la requête SQL avec prepare pour éviter les injections SQL
         $response = $bdd->prepare($request);
         $response->execute($params);
