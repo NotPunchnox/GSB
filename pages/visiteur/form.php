@@ -146,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $nbJustificatifs = count($validHorsForfait);
             $paramsFicheFrais = [
                 $idVisiteur, 
-                $mois, 
+                $frais['date'], 
                 $nbJustificatifs, 
                 $montantTotal, 
                 $dateCreation, 
