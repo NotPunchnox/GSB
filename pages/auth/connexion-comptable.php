@@ -14,7 +14,7 @@ if(checkLogin()) {
 // Méthode post pour éviter que les identifiants soient présent dans l'url
 if (isset($_POST['login']) && isset($_POST['mdp'])) {
     
-    $data = Login(htmlspecialchars$_POST['login']), (htmlspecialchars$_POST['mdp']));
+    $data = Login(htmlspecialchars($_POST['login'])), htmlspecialchars($_POST['mdp']);
     
     // logs($data, true);
     
